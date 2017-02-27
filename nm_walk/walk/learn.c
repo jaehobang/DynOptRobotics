@@ -15,7 +15,7 @@
 extern SIM sim;
 
 int n_parameters;
-
+double SIGMA = 2;
 /*****************************************************************************/
 /*****************************************************************************/
 // Example of optimizing a value
@@ -48,7 +48,8 @@ double run_sim_wo_save( double x[] )
   int i;
 
   for( i = 0; sim.time < sim.duration; i++ )
-    {
+    { 
+      update_parameters( &sim , SIGMA);
       controller( &sim );
       if ( sim.status == CRASHED ) { break; }
       integrate_one_time_step( &sim );
@@ -63,8 +64,12 @@ double run_sim( double x[] )
 
   int i;
 
+  printf("sim time is %d; sim duration is %d\n", sim.time, sim.duration);
+
   for( i = 0; sim.time < sim.duration; i++ )
     {
+      double push = update_parameters( &sim , SIGMA);
+      //printf("Pushing the model %f at %d\n", push, i);
       controller( &sim );
       save_data( &sim );
       if ( sim.status == CRASHED ) { break; }
